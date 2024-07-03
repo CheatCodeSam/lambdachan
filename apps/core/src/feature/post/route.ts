@@ -19,12 +19,15 @@ postRouter.get(
 	"/:id",
 	validateRequestParams(postPathSchema),
 	async (req, res) => {
-		return res.send("TODO")
+		const { params } = req
+		const post = await db.query.Post.findFirst({ where: eq(Post.id, params.id) })
+		if (!post) return res.status(404).send({message: `Post ${params.id} not found.`}) 
+		return res.send(post)
 	},
 )
 
 const postSchema = z.object({
-	thread_id: z.string(),
+	thread_id: z.string().cuid2(),
 	content: z.string(),
 })
 
