@@ -1,0 +1,1 @@
+ALTER TABLE "board" ADD COLUMN "created" timestamp DEFAULT now() NOT NULL;
