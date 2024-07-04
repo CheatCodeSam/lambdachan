@@ -15,5 +15,5 @@ app.use("/media", mediaRouter)
 app.set("trust proxy", true)
 
 app.listen(8080, async () => {
-    console.log("Server started on http://localhost:8080")
+  console.log("Server started on http://localhost:8080")
 })

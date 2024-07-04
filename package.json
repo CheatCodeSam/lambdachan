@@ -1,15 +1,18 @@
 {
-	"name": "lambdachan",
-	"private": true,
-	"scripts": {
-		"build": "turbo build",
-		"dev": "turbo dev"
-	},
-	"devDependencies": {
-		"turbo": "^2.0.6"
-	},
-	"packageManager": "pnpm@8.15.6",
-	"engines": {
-		"node": ">=18"
-	}
+  "name": "lambdachan",
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "prettier": "^3.3.2",
+    "prettier-plugin-astro": "^0.14.0",
+    "turbo": "^2.0.6"
+  },
+  "packageManager": "pnpm@8.15.6",
+  "engines": {
+    "node": ">=18"
+  }
 }
