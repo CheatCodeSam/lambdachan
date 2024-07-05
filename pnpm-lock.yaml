@@ -43,6 +43,9 @@ importers:
       express:
         specifier: ^4.19.2
         version: 4.19.2
+      express-fileupload:
+        specifier: ^1.5.0
+        version: 1.5.0
       postgres:
         specifier: ^3.4.4
         version: 3.4.4
@@ -56,6 +59,9 @@ importers:
       "@types/express":
         specifier: ^4.17.21
         version: 4.17.21
+      "@types/express-fileupload":
+        specifier: ^1.5.0
+        version: 1.5.0
       drizzle-kit:
         specifier: ^0.22.7
         version: 0.22.8
@@ -1506,6 +1512,12 @@ packages:
         integrity: sha512-fB3Zu92ucau0iQ0JMCFQE7b/dv8Ot07NI3KaZIkIUNXq82k4eBAqUaneXfleGY9JWskeS9y+u0nXMyspcuQrCg==,
       }
 
+  "@types/busboy@1.5.4":
+    resolution:
+      {
+        integrity: sha512-kG7WrUuAKK0NoyxfQHsVE6j1m01s6kMma64E+OZenQABMQyTJop1DumUWcLwAQ2JzpefU7PDYoRDKl8uZosFjw==,
+      }
+
   "@types/connect@3.4.38":
     resolution:
       {
@@ -1528,6 +1540,12 @@ packages:
     resolution:
       {
         integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==,
+      }
+
+  "@types/express-fileupload@1.5.0":
+    resolution:
+      {
+        integrity: sha512-Y9v88IC5ItAxkKwfnyIi1y0jSZwTMY4jqXUQLZ3jFhYJlLdRnN919bKBNM8jbVVD2cxywA/uEC1kNNpZQGwx7Q==,
       }
 
   "@types/express-serve-static-core@4.19.5":
@@ -1843,6 +1861,13 @@ packages:
       {
         integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==,
       }
+
+  busboy@1.6.0:
+    resolution:
+      {
+        integrity: sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==,
+      }
+    engines: { node: ">=10.16.0" }
 
   bytes@3.1.2:
     resolution:
@@ -2427,6 +2452,13 @@ packages:
         integrity: sha512-VyhnebXciFV2DESc+p6B+y0LjSm0krU4OgJN44qFAhBY0TJ+1V61tYD2+wHusZ6F9n5K+vl8k0sTy7PEfV4qpg==,
       }
     engines: { node: ">=16.17" }
+
+  express-fileupload@1.5.0:
+    resolution:
+      {
+        integrity: sha512-jSW3w9evqM37VWkEPkL2Ck5wUo2a8qa03MH+Ou/0ZSTpNlQFBvSLjU12k2nYcHhaMPv4JVvv6+Ac1OuLgUZb7w==,
+      }
+    engines: { node: ">=12.0.0" }
 
   express@4.19.2:
     resolution:
@@ -3979,6 +4011,13 @@ packages:
       }
     engines: { node: ">=18" }
 
+  streamsearch@1.1.0:
+    resolution:
+      {
+        integrity: sha512-Mcc5wHehp9aXz1ax6bZUyY5afg9u2rv5cqQI3mRrYkGC8rW2hM02jWuwjtL++LS5qinSyhj2QfLyNsuc+VsExg==,
+      }
+    engines: { node: ">=10.0.0" }
+
   string-width@4.2.3:
     resolution:
       {
@@ -5315,6 +5354,10 @@ snapshots:
       "@types/connect": 3.4.38
       "@types/node": 20.11.24
 
+  "@types/busboy@1.5.4":
+    dependencies:
+      "@types/node": 20.11.24
+
   "@types/connect@3.4.38":
     dependencies:
       "@types/node": 20.11.24
@@ -5326,6 +5369,11 @@ snapshots:
       "@types/ms": 0.7.34
 
   "@types/estree@1.0.5": {}
+
+  "@types/express-fileupload@1.5.0":
+    dependencies:
+      "@types/busboy": 1.5.4
+      "@types/express": 4.17.21
 
   "@types/express-serve-static-core@4.19.5":
     dependencies:
@@ -5613,6 +5661,10 @@ snapshots:
       update-browserslist-db: 1.1.0(browserslist@4.23.1)
 
   buffer-from@1.1.2: {}
+
+  busboy@1.6.0:
+    dependencies:
+      streamsearch: 1.1.0
 
   bytes@3.1.2: {}
 
@@ -5921,6 +5973,10 @@ snapshots:
       onetime: 6.0.0
       signal-exit: 4.1.0
       strip-final-newline: 3.0.0
+
+  express-fileupload@1.5.0:
+    dependencies:
+      busboy: 1.6.0
 
   express@4.19.2:
     dependencies:
@@ -7064,6 +7120,8 @@ snapshots:
   statuses@2.0.1: {}
 
   stdin-discarder@0.2.2: {}
+
+  streamsearch@1.1.0: {}
 
   string-width@4.2.3:
     dependencies:

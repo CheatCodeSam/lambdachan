@@ -15,6 +15,13 @@
       "when": 1719855912045,
       "tag": "0001_busy_mikhail_rasputin",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1720131050473,
+      "tag": "0002_fast_leo",
+      "breakpoints": true
     }
   ]
 }

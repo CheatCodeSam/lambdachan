@@ -3,10 +3,12 @@ import { boardRouter } from "./feature/board"
 import { postRouter } from "./feature/post"
 import { threadRouter } from "./feature/thread"
 import { mediaRouter } from "./feature/media"
+import ExpressFileUpload from "express-fileupload"
 
 const app = express()
 
 app.use(json())
+app.use(ExpressFileUpload())
 
 app.use("/board", boardRouter)
 app.use("/post", postRouter)

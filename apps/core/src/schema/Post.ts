@@ -2,6 +2,7 @@ import { createId } from "@paralleldrive/cuid2"
 import { relations } from "drizzle-orm"
 import { boolean, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core"
 import { Thread } from "./Thread"
+import { Media } from "./Media"
 
 export const Post = pgTable("post", {
   id: varchar("cuid").primaryKey().$defaultFn(createId),
@@ -21,6 +22,7 @@ export const PostRelations = relations(Post, ({ one }) => ({
     fields: [Post.threadId],
     references: [Thread.id],
   }),
+  media: one(Media),
 }))
 
 export type Post = typeof Post.$inferSelect
