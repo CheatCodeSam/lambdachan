@@ -50,7 +50,7 @@ mediaRouter.get(
 )
 
 const mediaParams = z.object({
-  key: z.string(),
+  key: z.string().cuid2(),
   filename: z.string(),
 })
 

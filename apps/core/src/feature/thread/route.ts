@@ -69,6 +69,7 @@ threadRouter.get(
     const { params } = req
     const result = await db.query.Thread.findFirst({
       where: eq(Thread.id, params.id),
+      with: { posts: { with: { media: true } } },
     })
     if (!result)
       return res.status(404).send({ message: `${params.id} not found.` })
