@@ -3,12 +3,14 @@ import { z } from "zod"
 import {
   validateRequestBody,
   validateRequestParams,
+  validateRequestQuery,
 } from "zod-express-middleware"
 import { db } from "../../db"
 import { Thread } from "../../schema/Thread"
-import { eq } from "drizzle-orm"
+import { and, count, desc, eq, exists } from "drizzle-orm"
 import { Board } from "../../schema/Board"
 import { Post } from "../../schema/Post"
+import { Media } from "../../schema/Media"
 
 export const threadRouter = express.Router()
 
@@ -69,10 +71,54 @@ threadRouter.get(
     const { params } = req
     const result = await db.query.Thread.findFirst({
       where: eq(Thread.id, params.id),
-      with: { posts: { with: { media: true } } },
     })
     if (!result)
       return res.status(404).send({ message: `${params.id} not found.` })
+    const replys = await db.select({ count: count() }).from(Post).where(eq(Post.threadId, result.id))
+    console.log(replys)
     return res.send(result)
+  }
+)
+
+const getThreadPostSchema = z.object({
+  id: z.string().cuid2(),
+})
+
+const getThreadPostQuerySchema = z.object({
+  start: z.number().int().optional(),
+  limit: z.number().int().optional(),
+})
+
+threadRouter.get(
+  "/:id/post",
+  validateRequestParams(getThreadPostSchema),
+  validateRequestQuery(getThreadPostQuerySchema),
+  async (req, res) => {
+    const { params, query } = req
+    const start = query.start
+    const limit = query.limit
+
+    const thread = await db.query.Thread.findFirst({
+      where: eq(Thread.id, params.id),
+    })
+    if (!thread)
+      return res.status(404).send({ message: `Thread ${params.id} not found` })
+
+    const posts = await db.query.Post.findMany({
+      where: eq(Post.threadId, thread.id),
+      offset: start,
+      orderBy: desc(Post.created),
+      limit: limit,
+      with: { media: true },
+    })
+
+    const retVal = {
+        _links: {
+          next: "",
+          prev: ""
+        },
+        results: posts
+    }
+    return res.send(retVal)
   }
 )

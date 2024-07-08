@@ -3,6 +3,7 @@ import { z } from "zod"
 import {
   validateRequestBody,
   validateRequestParams,
+  validateRequestQuery,
 } from "zod-express-middleware"
 import { db } from "../../db"
 import { eq } from "drizzle-orm"
@@ -60,3 +61,18 @@ boardRouter.get("", async (req, res) => {
   const result = await db.select().from(Board)
   res.send(result)
 })
+
+const getBoardThreadsSchema = z.object({
+  id: z.string().cuid2(),
+})
+
+const getBoardThreadsQuerySchema = z.object({
+  id: z.string().cuid2(),
+})
+
+boardRouter.get(
+  "/id:/thread",
+  validateRequestParams(getBoardThreadsSchema),
+  validateRequestQuery(getBoardThreadsQuerySchema),
+  async (req, res) => {}
+)
