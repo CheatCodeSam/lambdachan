@@ -11,6 +11,8 @@ import { count, desc, eq } from "drizzle-orm"
 import { Board } from "../../schema/Board"
 import { Post } from "../../schema/Post"
 import { Media } from "../../schema/Media"
+import { getAndSerializeThread } from "./service"
+import { HttpError } from "../../util"
 
 export const threadRouter = express.Router()
 
@@ -69,23 +71,13 @@ threadRouter.get(
   validateRequestParams(getThreadSchema),
   async (req, res) => {
     const { params } = req
-    const result = await db.query.Thread.findFirst({
-      where: eq(Thread.id, params.id),
-    })
-    if (!result)
-      return res.status(404).send({ message: `${params.id} not found.` })
-    const replys = await db
-      .select({ count: count() })
-      .from(Post)
-      .where(eq(Post.threadId, result.id))
-    const medias = await db
-      .select({ count: count() })
-      .from(Post)
-      .innerJoin(Media, eq(Post.id, Media.postId))
-      .where(eq(Post.threadId, result.id))
-    console.log(replys)
-    console.log(medias)
-    return res.send(result)
+    try {
+      const result = await getAndSerializeThread(params.id)
+      return res.send(result)
+    } catch (error) {
+      if (error instanceof HttpError) return error.respond(res).send()
+      else throw error
+    }
   }
 )
 
