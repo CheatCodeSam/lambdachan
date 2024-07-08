@@ -7,7 +7,7 @@ import {
 } from "zod-express-middleware"
 import { db } from "../../db"
 import { Thread } from "../../schema/Thread"
-import { and, count, desc, eq, exists } from "drizzle-orm"
+import { count, desc, eq } from "drizzle-orm"
 import { Board } from "../../schema/Board"
 import { Post } from "../../schema/Post"
 import { Media } from "../../schema/Media"
@@ -74,8 +74,17 @@ threadRouter.get(
     })
     if (!result)
       return res.status(404).send({ message: `${params.id} not found.` })
-    const replys = await db.select({ count: count() }).from(Post).where(eq(Post.threadId, result.id))
+    const replys = await db
+      .select({ count: count() })
+      .from(Post)
+      .where(eq(Post.threadId, result.id))
+    const medias = await db
+      .select({ count: count() })
+      .from(Post)
+      .innerJoin(Media, eq(Post.id, Media.postId))
+      .where(eq(Post.threadId, result.id))
     console.log(replys)
+    console.log(medias)
     return res.send(result)
   }
 )
@@ -113,11 +122,11 @@ threadRouter.get(
     })
 
     const retVal = {
-        _links: {
-          next: "",
-          prev: ""
-        },
-        results: posts
+      _links: {
+        next: "",
+        prev: "",
+      },
+      results: posts,
     }
     return res.send(retVal)
   }
