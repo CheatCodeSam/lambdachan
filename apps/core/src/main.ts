@@ -4,9 +4,11 @@ import { postRouter } from "./feature/post"
 import { threadRouter } from "./feature/thread"
 import { mediaRouter } from "./feature/media"
 import ExpressFileUpload from "express-fileupload"
+import cors from "cors"
 
 const app = express()
 
+app.use(cors())
 app.use(json())
 app.use(ExpressFileUpload())
 
