@@ -91,7 +91,7 @@ boardRouter.get(
     const threads = await db.query.Thread.findMany({
       where: eq(Thread.boardId, board.id),
       offset: start,
-      orderBy: desc(Thread.id),
+      orderBy: desc(Thread.created),
       limit: limit,
     })
     const serializedThreads: Awaited<ReturnType<typeof serializeThread>>[] = []

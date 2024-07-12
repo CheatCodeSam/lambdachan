@@ -17,7 +17,7 @@ export const threadRouter = express.Router()
 
 const threadSchema = z.object({
   board_id: z.string(),
-  title: z.string(),
+  title: z.string().optional(),
   post: insertPostSchema,
 })
 
