@@ -6,8 +6,10 @@ import {
   validateRequestQuery,
 } from "zod-express-middleware"
 import { db } from "../../db"
-import { eq } from "drizzle-orm"
+import { desc, eq } from "drizzle-orm"
 import { Board } from "../../schema/Board"
+import { Thread } from "../../schema/Thread"
+import { serializeThread } from "../thread/service"
 
 export const boardRouter = express.Router()
 
@@ -67,12 +69,37 @@ const getBoardThreadsSchema = z.object({
 })
 
 const getBoardThreadsQuerySchema = z.object({
-  id: z.string().cuid2(),
+  start: z.number().int().optional(),
+  limit: z.number().int().optional(),
 })
 
 boardRouter.get(
   "/id:/thread",
   validateRequestParams(getBoardThreadsSchema),
   validateRequestQuery(getBoardThreadsQuerySchema),
-  async (req, res) => {}
+  async (req, res) => {
+    const { params, query } = req
+    const start = query.start
+    const limit = query.limit
+
+    const board = await db.query.Board.findFirst({
+      where: eq(Board.id, params.id),
+    })
+    if (!board)
+      return res.status(404).send({ message: `board ${params.id} not found` })
+
+    const threads = await db.query.Thread.findMany({
+      where: eq(Thread.boardId, board.id),
+      offset: start,
+      orderBy: desc(Thread.id),
+      limit: limit,
+    })
+
+    const retval: ReturnType<typeof serializeThread>[] = []
+
+    for (const t of threads) {
+      retval.push(serializeThread(t))
+    }
+    return res.send(retval)
+  }
 )

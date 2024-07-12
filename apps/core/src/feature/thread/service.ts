@@ -3,34 +3,25 @@ import { db } from "../../db"
 import { Thread } from "../../schema/Thread"
 import { Media } from "../../schema/Media"
 import { Post } from "../../schema/Post"
-import { httpError } from "../../util"
 
-export const serializeThread = (
-  thread: Thread,
-  replys: number,
-  medias: number
-) => {
+export const serializeThread = async (t: Thread) => {
+  const { replys, medias } = await getThreadMediaReplyCounts(t)
   return {
-    ...thread,
+    ...t,
     replys,
     medias,
   }
 }
 
-export const getAndSerializeThread = async (id: string) => {
-  const result = await db.query.Thread.findFirst({
-    where: eq(Thread.id, id),
-  })
-  if (!result) throw httpError(404, `Thread ${id} not found.`)
+export const getThreadMediaReplyCounts = async (t: Thread) => {
   const replys = await db
     .select({ count: count() })
     .from(Post)
-    .where(eq(Post.threadId, result.id))
+    .where(eq(Post.threadId, t.id))
   const medias = await db
     .select({ count: count() })
     .from(Post)
     .innerJoin(Media, eq(Post.id, Media.postId))
-    .where(eq(Post.threadId, result.id))
-
-  return serializeThread(result, replys[0].count, medias[0].count)
+    .where(eq(Post.threadId, t.id))
+  return { replys: replys[0].count, medias: medias[0].count }
 }

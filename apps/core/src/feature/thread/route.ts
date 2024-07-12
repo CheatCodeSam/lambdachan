@@ -7,12 +7,10 @@ import {
 } from "zod-express-middleware"
 import { db } from "../../db"
 import { Thread } from "../../schema/Thread"
-import { count, desc, eq } from "drizzle-orm"
+import { desc, eq } from "drizzle-orm"
 import { Board } from "../../schema/Board"
 import { Post } from "../../schema/Post"
-import { Media } from "../../schema/Media"
-import { getAndSerializeThread } from "./service"
-import { HttpError } from "../../util"
+import { serializeThread } from "./service"
 
 export const threadRouter = express.Router()
 
@@ -71,13 +69,13 @@ threadRouter.get(
   validateRequestParams(getThreadSchema),
   async (req, res) => {
     const { params } = req
-    try {
-      const result = await getAndSerializeThread(params.id)
-      return res.send(result)
-    } catch (error) {
-      if (error instanceof HttpError) return error.respond(res).send()
-      else throw error
-    }
+    const thread = await db.query.Thread.findFirst({
+      where: eq(Thread.id, params.id),
+    })
+    if (!thread)
+      return res.status(404).send({ message: `Thread ${params.id} not found.` })
+    const result = await serializeThread(thread)
+    return res.send(result)
   }
 )
 
