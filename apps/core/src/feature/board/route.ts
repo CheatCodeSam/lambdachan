@@ -74,7 +74,7 @@ const getBoardThreadsQuerySchema = z.object({
 })
 
 boardRouter.get(
-  "/id:/thread",
+  "/:id/thread",
   validateRequestParams(getBoardThreadsSchema),
   validateRequestQuery(getBoardThreadsQuerySchema),
   async (req, res) => {
@@ -94,11 +94,16 @@ boardRouter.get(
       orderBy: desc(Thread.id),
       limit: limit,
     })
-
-    const retval: ReturnType<typeof serializeThread>[] = []
-
+    const serializedThreads: Awaited<ReturnType<typeof serializeThread>>[] = []
     for (const t of threads) {
-      retval.push(serializeThread(t))
+      serializedThreads.push(await serializeThread(t))
+    }
+    const retval = {
+      _links: {
+        next: "",
+        prev: "",
+      },
+      result: serializedThreads,
     }
     return res.send(retval)
   }

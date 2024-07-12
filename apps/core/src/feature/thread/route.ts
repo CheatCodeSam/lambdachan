@@ -11,15 +11,14 @@ import { desc, eq } from "drizzle-orm"
 import { Board } from "../../schema/Board"
 import { Post } from "../../schema/Post"
 import { serializeThread } from "./service"
+import { insertPostSchema } from "../post/schema"
 
 export const threadRouter = express.Router()
 
 const threadSchema = z.object({
   board_id: z.string(),
   title: z.string(),
-  post: z.object({
-    content: z.string(),
-  }),
+  post: insertPostSchema,
 })
 
 threadRouter.post("", validateRequestBody(threadSchema), async (req, res) => {
