@@ -7,6 +7,7 @@ import { Post } from "./Post"
 export const Thread = pgTable("thread", {
   id: varchar("cuid").primaryKey().$defaultFn(createId),
   title: varchar("title"),
+  created: timestamp("created").defaultNow().notNull(),
   pinned: boolean("pinned").default(false).notNull(),
   boardId: varchar("board_id").notNull(),
   hidden: boolean("hidden").default(false).notNull(),

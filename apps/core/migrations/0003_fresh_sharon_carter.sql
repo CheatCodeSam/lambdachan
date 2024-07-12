@@ -1,0 +1,1 @@
+ALTER TABLE "thread" ADD COLUMN "created" timestamp DEFAULT now() NOT NULL;
