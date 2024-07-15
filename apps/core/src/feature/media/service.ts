@@ -1,6 +1,8 @@
 import path from "node:path"
 import { promises as fs } from "node:fs"
 
+export const mimetypes = ["image/jpeg", "image/png"] as const
+
 export const uploadFile = async (key: string, data: Buffer) => {
   const filePath = path.join("./uploads/", key)
   await fs.writeFile(filePath, data)
