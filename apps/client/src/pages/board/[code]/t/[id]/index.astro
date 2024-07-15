@@ -1,19 +1,17 @@
 ---
 import ky, { HTTPError } from "ky"
-import Layout from "../../../../layouts/Layout.astro"
+import Layout from "../../../../../layouts/Layout.astro"
 const { id, code } = Astro.params
 
 try {
-  const board: any = await ky
-    .get(`http://localhost:8080/board/code/${code}`)
-    .json()
+  await ky.get(`http://localhost:8080/board/code/${code}`).json()
 } catch (error) {
   if (error instanceof HTTPError)
     if (error.response.status === 404) return Astro.redirect(`/error`)
 }
 
 try {
-  const thread: any = await ky.get(`http://localhost:8080/thread/${id}`).json()
+  await ky.get(`http://localhost:8080/thread/${id}`).json()
 } catch (error) {
   if (error instanceof HTTPError)
     if (error.response.status === 404)
@@ -28,7 +26,7 @@ if (Astro.request.method === "POST") {
   try {
     const data = await Astro.request.formData()
     const content = data.get("content")
-    const image = data.get("image")
+    const image: any = data.get("image")
 
     const formData = new FormData()
     formData.append("file", image)
