@@ -28,17 +28,29 @@ if (Astro.request.method === "POST") {
   try {
     const data = await Astro.request.formData()
     const content = data.get("content")
+    const image = data.get("image")
+
+    const formData = new FormData()
+    formData.append("file", image)
+
+    const media: any = await ky
+      .post(`http://localhost:8080/media`, {
+        body: formData,
+      })
+      .json()
+
     const post: any = await ky
       .post(`http://localhost:8080/post`, {
         json: {
           thread_id: id,
           post: {
             content: content,
+            media_key: media.key,
           },
         },
       })
       .json()
-    console.log(post)
+
     return Astro.redirect(`/board/${code}/t/${id}#${post.id}`)
   } catch (error) {
     if (error instanceof Error) {
@@ -49,12 +61,25 @@ if (Astro.request.method === "POST") {
 ---
 
 <Layout title="Posts of threads.">
-  {posts.result.toReversed().map((el: any) => <div class="">{el.content}</div>)}
+  {
+    posts.result.toReversed().map((el: any) => (
+      <div class="">
+        {el.content}
+        {el.media && (
+          <img src={`http://localhost:8080/media/${el.media.key}`} alt="" />
+        )}
+      </div>
+    ))
+  }
   <div class="">
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
       <label>
         Content:
         <input type="text" name="content" required />
+      </label>
+      <label>
+        Upload Image:
+        <input type="file" name="image" accept="image/*" required />
       </label>
       <button>Submit</button>
     </form>

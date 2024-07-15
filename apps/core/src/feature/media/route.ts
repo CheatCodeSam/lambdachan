@@ -9,6 +9,7 @@ import { getFile, uploadFile } from "./service"
 export const mediaRouter = express.Router()
 
 mediaRouter.post("", async (req, res) => {
+  console.log(req.files)
   if (!req.files || !req.files.file)
     return res.status(400).send({ message: "No files were uploaded." })
   if (Array.isArray(req.files.file))
@@ -26,7 +27,7 @@ mediaRouter.post("", async (req, res) => {
 
   await uploadFile(media[0].key, file.data)
 
-  return res.send(media)
+  return res.send(media[0])
 })
 
 const shortMediaParams = z.object({
