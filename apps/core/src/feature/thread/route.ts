@@ -12,6 +12,7 @@ import { Board } from "../../schema/Board"
 import { Post } from "../../schema/Post"
 import { serializeThread } from "./service"
 import { insertPostSchema } from "../post/schema"
+import { Media } from "../../schema/Media"
 
 export const threadRouter = express.Router()
 
@@ -53,6 +54,18 @@ threadRouter.post("", validateRequestBody(threadSchema), async (req, res) => {
         ip: req.ip ?? "null",
       })
       .returning()
+
+    if (body.post.media_key) {
+      const media = await tx.query.Media.findFirst({
+        where: eq(Media.key, body.post.media_key),
+      })
+      if (!media) tx.rollback()
+      await tx
+        .update(Media)
+        .set({ postId: post[0].id })
+        .where(eq(Media.key, body.post.media_key))
+    }
+
     return res.json({ ...thread[0], post })
   })
 

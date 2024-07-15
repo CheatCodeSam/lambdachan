@@ -16,6 +16,20 @@ if (Astro.request.method === "POST") {
     const data = await Astro.request.formData()
     const content = data.get("content")
     const title = data.get("title")
+
+    const image: any = data.get("image")
+
+    const formData = new FormData()
+    formData.append("file", image)
+    console.log("wtf")
+    console.log(image)
+
+    const media: any = await ky
+      .post(`http://localhost:8080/media`, {
+        body: formData,
+      })
+      .json()
+
     const res: any = await ky
       .post(`http://localhost:8080/thread`, {
         json: {
@@ -23,6 +37,7 @@ if (Astro.request.method === "POST") {
           title: title,
           post: {
             content: content,
+            media_key: media.key,
           },
         },
       })
@@ -47,7 +62,7 @@ if (Astro.request.method === "POST") {
     ))
   }
   <div class="">
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
       <label>
         title:
         <input type="text" name="title" required />
@@ -55,6 +70,10 @@ if (Astro.request.method === "POST") {
       <label>
         Content:
         <input type="text" name="content" required />
+      </label>
+      <label>
+        Upload Image:
+        <input type="file" name="image" accept="image/*" required />
       </label>
       <button>Submit</button>
     </form>

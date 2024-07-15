@@ -9,7 +9,6 @@ import { getFile, uploadFile } from "./service"
 export const mediaRouter = express.Router()
 
 mediaRouter.post("", async (req, res) => {
-  console.log(req.files)
   if (!req.files || !req.files.file)
     return res.status(400).send({ message: "No files were uploaded." })
   if (Array.isArray(req.files.file))
