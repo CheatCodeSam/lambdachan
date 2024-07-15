@@ -4,11 +4,13 @@ import Layout from "../../../layouts/Layout.astro"
 const { code } = Astro.params
 
 const boardInformation: any = await ky
-  .get(`http://localhost:8080/board/code/${code}`)
+  .get(`${import.meta.env.BACKEND_SERVER_URI}/board/code/${code}`)
   .json()
 
 const threads: any = await ky
-  .get(`http://localhost:8080/board/${boardInformation.id}/thread`)
+  .get(
+    `${import.meta.env.BACKEND_SERVER_URI}/board/${boardInformation.id}/thread`
+  )
   .json()
 
 if (Astro.request.method === "POST") {
@@ -23,13 +25,13 @@ if (Astro.request.method === "POST") {
     formData.append("file", image)
 
     const media: any = await ky
-      .post(`http://localhost:8080/media`, {
+      .post(`${import.meta.env.BACKEND_SERVER_URI}/media`, {
         body: formData,
       })
       .json()
 
     const res: any = await ky
-      .post(`http://localhost:8080/thread`, {
+      .post(`${import.meta.env.BACKEND_SERVER_URI}/thread`, {
         json: {
           board_id: boardInformation.id,
           title: title,

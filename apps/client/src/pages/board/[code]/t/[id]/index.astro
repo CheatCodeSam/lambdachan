@@ -4,14 +4,16 @@ import Layout from "../../../../../layouts/Layout.astro"
 const { id, code } = Astro.params
 
 try {
-  await ky.get(`http://localhost:8080/board/code/${code}`).json()
+  await ky
+    .get(`${import.meta.env.BACKEND_SERVER_URI}/board/code/${code}`)
+    .json()
 } catch (error) {
   if (error instanceof HTTPError)
     if (error.response.status === 404) return Astro.redirect(`/error`)
 }
 
 try {
-  await ky.get(`http://localhost:8080/thread/${id}`).json()
+  await ky.get(`${import.meta.env.BACKEND_SERVER_URI}/thread/${id}`).json()
 } catch (error) {
   if (error instanceof HTTPError)
     if (error.response.status === 404)
@@ -19,7 +21,7 @@ try {
 }
 
 const posts: any = await ky
-  .get(`http://localhost:8080/thread/${id}/post`)
+  .get(`${import.meta.env.BACKEND_SERVER_URI}/thread/${id}/post`)
   .json()
 
 if (Astro.request.method === "POST") {
@@ -32,13 +34,13 @@ if (Astro.request.method === "POST") {
     formData.append("file", image)
 
     const media: any = await ky
-      .post(`http://localhost:8080/media`, {
+      .post(`${import.meta.env.BACKEND_SERVER_URI}/media`, {
         body: formData,
       })
       .json()
 
     const post: any = await ky
-      .post(`http://localhost:8080/post`, {
+      .post(`${import.meta.env.BACKEND_SERVER_URI}/post`, {
         json: {
           thread_id: id,
           post: {
@@ -64,7 +66,10 @@ if (Astro.request.method === "POST") {
       <div class="">
         {el.content}
         {el.media && (
-          <img src={`http://localhost:8080/media/${el.media.key}`} alt="" />
+          <img
+            src={`${import.meta.env.BACKEND_SERVER_URI}/media/${el.media.key}`}
+            alt=""
+          />
         )}
       </div>
     ))

@@ -1,7 +1,11 @@
 ---
 import Layout from "../layouts/Layout.astro"
 import ky from "ky"
-const json: any = await ky.get("http://localhost:8080/board").json()
+const json: any = await ky
+  .get(`${import.meta.env.BACKEND_SERVER_URI}/board`)
+  .json()
+
+console.log(import.meta.env.BACKEND_SERVER_URI)
 
 if (Astro.request.method === "POST") {
   try {
@@ -9,7 +13,7 @@ if (Astro.request.method === "POST") {
     const { code, title, description } = Object.fromEntries(data)
 
     const createdBoard: any = await ky
-      .post(`http://localhost:8080/board`, {
+      .post(`${import.meta.env.BACKEND_SERVER_URI}/board`, {
         json: {
           code: code,
           title: title,
