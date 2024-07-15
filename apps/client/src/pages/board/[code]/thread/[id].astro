@@ -23,8 +23,36 @@ try {
 const posts: any = await ky
   .get(`http://localhost:8080/thread/${id}/post`)
   .json()
+
+if (Astro.request.method === "POST") {
+  try {
+    const data = await Astro.request.formData()
+    const content = data.get("content")
+    await ky.post(`http://localhost:8080/post`, {
+      json: {
+        thread_id: id,
+        post: {
+          content: content,
+        },
+      },
+    })
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message)
+    }
+  }
+}
 ---
 
 <Layout title="Posts of threads.">
-  {posts.results.map((el: any) => <div class="">{el.content}</div>)}
+  {posts.result.map((el: any) => <div class="">{el.content}</div>)}
+  <div class="">
+    <form method="POST">
+      <label>
+        Content:
+        <input type="text" name="content" required />
+      </label>
+      <button>Submit</button>
+    </form>
+  </div>
 </Layout>

@@ -7,14 +7,14 @@ const boardInformation: any = await ky
   .get(`http://localhost:8080/board/code/${code}`)
   .json()
 
-const json: any = await ky
+const threads: any = await ky
   .get(`http://localhost:8080/board/${boardInformation.id}/thread`)
   .json()
 ---
 
 <Layout title="Welcome to Astro.">
   {
-    json.result.map((el: any) => (
+    threads.result.map((el: any) => (
       <div class="">
         <a href={`/board/${code}/thread/${el.id}`}>
           {el.title} - {el.replys} | {el.medias}

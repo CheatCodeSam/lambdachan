@@ -115,7 +115,7 @@ threadRouter.get(
         next: "",
         prev: "",
       },
-      results: posts,
+      result: posts,
     }
     return res.send(retVal)
   }
