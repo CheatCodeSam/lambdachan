@@ -10,16 +10,53 @@ const boardInformation: any = await ky
 const threads: any = await ky
   .get(`http://localhost:8080/board/${boardInformation.id}/thread`)
   .json()
+
+if (Astro.request.method === "POST") {
+  try {
+    const data = await Astro.request.formData()
+    const content = data.get("content")
+    const title = data.get("title")
+    const res: any = await ky
+      .post(`http://localhost:8080/thread`, {
+        json: {
+          board_id: boardInformation.id,
+          title: title,
+          post: {
+            content: content,
+          },
+        },
+      })
+      .json()
+    return Astro.redirect(`/board/${code}/t/${res.id}`)
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message)
+    }
+  }
+}
 ---
 
 <Layout title="Welcome to Astro.">
   {
     threads.result.map((el: any) => (
       <div class="">
-        <a href={`/board/${code}/thread/${el.id}`}>
+        <a href={`/board/${code}/t/${el.id}`}>
           {el.title} - {el.replys} | {el.medias}
         </a>
       </div>
     ))
   }
+  <div class="">
+    <form method="POST">
+      <label>
+        title:
+        <input type="text" name="title" required />
+      </label>
+      <label>
+        Content:
+        <input type="text" name="content" required />
+      </label>
+      <button>Submit</button>
+    </form>
+  </div>
 </Layout>

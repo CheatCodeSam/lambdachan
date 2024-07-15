@@ -53,7 +53,7 @@ threadRouter.post("", validateRequestBody(threadSchema), async (req, res) => {
         ip: req.ip ?? "null",
       })
       .returning()
-    return res.json({ thread, post })
+    return res.json({ ...thread[0], post })
   })
 
   return x.send()

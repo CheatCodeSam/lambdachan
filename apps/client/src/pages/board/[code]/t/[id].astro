@@ -28,14 +28,18 @@ if (Astro.request.method === "POST") {
   try {
     const data = await Astro.request.formData()
     const content = data.get("content")
-    await ky.post(`http://localhost:8080/post`, {
-      json: {
-        thread_id: id,
-        post: {
-          content: content,
+    const post: any = await ky
+      .post(`http://localhost:8080/post`, {
+        json: {
+          thread_id: id,
+          post: {
+            content: content,
+          },
         },
-      },
-    })
+      })
+      .json()
+    console.log(post)
+    return Astro.redirect(`/board/${code}/t/${id}#${post.id}`)
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message)
@@ -45,7 +49,7 @@ if (Astro.request.method === "POST") {
 ---
 
 <Layout title="Posts of threads.">
-  {posts.result.map((el: any) => <div class="">{el.content}</div>)}
+  {posts.result.toReversed().map((el: any) => <div class="">{el.content}</div>)}
   <div class="">
     <form method="POST">
       <label>

@@ -70,7 +70,7 @@ postRouter.post("", validateRequestBody(postSchema), async (req, res) => {
           .where(eq(Media.key, insertPost.media_key))
       }
 
-      return res.json(post)
+      return res.json(post[0])
     })
     return retVal.send()
   } catch (error) {

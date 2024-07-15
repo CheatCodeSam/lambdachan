@@ -47,9 +47,7 @@
         "board_code_unique": {
           "name": "board_code_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "code"
-          ]
+          "columns": ["code"]
         }
       }
     },
