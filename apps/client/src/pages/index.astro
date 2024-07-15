@@ -1,13 +1,19 @@
 ---
 import Layout from "../layouts/Layout.astro"
 import ky from "ky"
-const json = await ky.get('http://localhost:8080/board').json() as any
-console.log(json)
+const json: any = await ky.get("http://localhost:8080/board").json()
 ---
 
 <Layout title="Welcome to Astro.">
   <main>
-    {json.map((d: any) => <div>{d.code} - {d.id}</div>)}
+    {
+      json.map((d: any) => (
+        <div>
+          <a href={`/board/${d.code}/`}>
+            {d.code} - {d.id}
+          </a>
+        </div>
+      ))
+    }
   </main>
 </Layout>
-

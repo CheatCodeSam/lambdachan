@@ -1,0 +1,30 @@
+---
+import ky, { HTTPError } from "ky"
+import Layout from "../../../../layouts/Layout.astro"
+const { id, code } = Astro.params
+
+try {
+  const board: any = await ky
+    .get(`http://localhost:8080/board/code/${code}`)
+    .json()
+} catch (error) {
+  if (error instanceof HTTPError)
+    if (error.response.status === 404) return Astro.redirect(`/error`)
+}
+
+try {
+  const thread: any = await ky.get(`http://localhost:8080/thread/${id}`).json()
+} catch (error) {
+  if (error instanceof HTTPError)
+    if (error.response.status === 404)
+      return Astro.redirect(`/board/${code}/error`)
+}
+
+const posts: any = await ky
+  .get(`http://localhost:8080/thread/${id}/post`)
+  .json()
+---
+
+<Layout title="Posts of threads.">
+  {posts.results.map((el: any) => <div class="">{el.content}</div>)}
+</Layout>
