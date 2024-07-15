@@ -21,8 +21,6 @@ if (Astro.request.method === "POST") {
 
     const formData = new FormData()
     formData.append("file", image)
-    console.log("wtf")
-    console.log(image)
 
     const media: any = await ky
       .post(`http://localhost:8080/media`, {
