@@ -5,6 +5,7 @@ import { Media } from "../../schema/Media"
 import { validateRequestParams } from "zod-express-middleware"
 import { eq } from "drizzle-orm"
 import { getFile, mimetypes, uploadFile } from "./service"
+import sharp from "sharp"
 
 export const mediaRouter = express.Router()
 
@@ -17,18 +18,25 @@ mediaRouter.post("", async (req, res) => {
   if (!mimetypes.includes(file.mimetype as any))
     return res.status(400).send({ message: `"${file.mimetype}" not supported` })
 
-  const media = await db
-    .insert(Media)
-    .values({
-      mimetype: file.mimetype,
-      filename: file.name,
-      ip: req.ip ?? "null",
-    })
-    .returning()
+  const media = (
+    await db
+      .insert(Media)
+      .values({
+        mimetype: file.mimetype,
+        filename: file.name,
+        ip: req.ip ?? "null",
+      })
+      .returning()
+  )[0]
 
-  await uploadFile(media[0].key, file.data)
+  await uploadFile(media.key, file.data)
 
-  return res.send(media[0])
+  const thumbnail = await sharp(file.data)
+    .resize(240, null, { fit: "inside" })
+    .toBuffer()
+  await uploadFile(media.thumbnail, thumbnail)
+
+  return res.send(media)
 })
 
 const shortMediaParams = z.object({

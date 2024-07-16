@@ -5,6 +5,7 @@ import { relations } from "drizzle-orm"
 
 export const Media = pgTable("media", {
   key: varchar("cuid").primaryKey().$defaultFn(createId),
+  thumbnail: varchar("thumbnail").notNull().$defaultFn(createId),
   postId: varchar("post_id"),
   mimetype: varchar("mimetype").notNull(),
   filename: varchar("filename").notNull(),
