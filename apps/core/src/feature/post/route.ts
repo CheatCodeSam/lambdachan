@@ -9,7 +9,7 @@ import { eq } from "drizzle-orm"
 import { Thread } from "../../schema/Thread"
 import { Post } from "../../schema/Post"
 import { insertPostSchema } from "./schema"
-import { Media } from "../../schema/Media"
+import { insertPostIntoDb } from "./service"
 
 export const postRouter = express.Router()
 
@@ -40,39 +40,24 @@ const postSchema = z.object({
 postRouter.post("", validateRequestBody(postSchema), async (req, res) => {
   const { body } = req
   const insertPost = body.post
+
+  const thread = await db.query.Thread.findFirst({
+    where: eq(Thread.id, body.thread_id),
+  })
+
+  if (!thread)
+    return res
+      .status(404)
+      .json({ message: `Thread ${body.thread_id} not found.` })
+
   try {
-    const retVal = await db.transaction(async (tx) => {
-      const thread = await tx.query.Thread.findFirst({
-        where: eq(Thread.id, body.thread_id),
-      })
-      if (!thread)
-        return res
-          .status(404)
-          .json({ message: `Thread ${body.thread_id} not found.` })
-
-      const post = await tx
-        .insert(Post)
-        .values({
-          ip: req.ip ?? "null",
-          content: insertPost.content,
-          threadId: thread.id,
-        })
-        .returning()
-
-      if (insertPost.media_key) {
-        const media = await tx.query.Media.findFirst({
-          where: eq(Media.key, insertPost.media_key),
-        })
-        if (!media) tx.rollback()
-        await tx
-          .update(Media)
-          .set({ postId: post[0].id })
-          .where(eq(Media.key, insertPost.media_key))
-      }
-
-      return res.json(post[0])
+    const post = await insertPostIntoDb({
+      threadid: thread.id,
+      ip: req.ip ?? "null",
+      post: insertPost,
     })
-    return retVal.send()
+
+    return res.json(post).send()
   } catch (error) {
     return res
       .status(404)

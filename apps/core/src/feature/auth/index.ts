@@ -1,0 +1,1 @@
+export { generateTripCode } from "./service"

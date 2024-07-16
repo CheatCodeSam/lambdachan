@@ -12,7 +12,7 @@ import { Board } from "../../schema/Board"
 import { Post } from "../../schema/Post"
 import { serializeThread } from "./service"
 import { insertPostSchema } from "../post/schema"
-import { Media } from "../../schema/Media"
+import { insertPostIntoDb } from "../post/service"
 
 export const threadRouter = express.Router()
 
@@ -34,39 +34,18 @@ threadRouter.post("", validateRequestBody(threadSchema), async (req, res) => {
       .send({ message: `Board ${body.board_id} not found.` })
 
   const x = await db.transaction(async (tx) => {
-    const board = await tx.query.Board.findFirst({
-      where: eq(Board.id, body.board_id),
-    })
-    if (!board)
-      return res
-        .status(404)
-        .json({ message: `Board ${body.board_id} not found.` })
-
-    const thread = await tx
-      .insert(Thread)
-      .values({ boardId: body.board_id, title: body.title })
-      .returning()
-    const post = await tx
-      .insert(Post)
-      .values({
-        threadId: thread[0].id,
-        content: body.post.content,
-        ip: req.ip ?? "null",
-      })
-      .returning()
-
-    if (body.post.media_key) {
-      const media = await tx.query.Media.findFirst({
-        where: eq(Media.key, body.post.media_key),
-      })
-      if (!media) tx.rollback()
+    const thread = (
       await tx
-        .update(Media)
-        .set({ postId: post[0].id })
-        .where(eq(Media.key, body.post.media_key))
-    }
-
-    return res.json({ ...thread[0], post })
+        .insert(Thread)
+        .values({ boardId: body.board_id, title: body.title })
+        .returning()
+    )[0]
+    const post = await insertPostIntoDb({
+      threadid: thread.id,
+      ip: req.ip ?? "null",
+      post: body.post,
+    })
+    return res.json({ ...thread, post })
   })
 
   return x.send()
