@@ -39,33 +39,12 @@ mediaRouter.post("", async (req, res) => {
   return res.send(media)
 })
 
-const shortMediaParams = z.object({
+const mediaParams = z.object({
   key: z.string().cuid2(),
 })
 
 mediaRouter.get(
   "/:key",
-  validateRequestParams(shortMediaParams),
-  async (req, res) => {
-    const params = req.params
-    const media = await db.query.Media.findFirst({
-      where: eq(Media.key, params.key),
-    })
-    if (!media)
-      return res
-        .status(404)
-        .send({ message: `File with key ${params.key} not found.` })
-    return res.redirect(`/media/${media.key}/${media.filename}`)
-  }
-)
-
-const mediaParams = z.object({
-  key: z.string().cuid2(),
-  filename: z.string(),
-})
-
-mediaRouter.get(
-  "/:key/:filename",
   validateRequestParams(mediaParams),
   async (req, res) => {
     const params = req.params
@@ -76,12 +55,33 @@ mediaRouter.get(
       return res
         .status(404)
         .send({ message: `File with key ${params.key} not found.` })
-    if (params.filename !== media.filename)
-      return res.redirect(`/media/${media.key}/${media.filename}`)
     const file = await getFile(media.key)
     return res
       .set("Content-Type", media.mimetype)
-      .set("Content-Disposition", "inline")
+      .set("Content-Disposition", `inline; filename*="${media.filename}"`)
+      .send(file)
+  }
+)
+
+mediaRouter.get(
+  "/thumb/:key",
+  validateRequestParams(mediaParams),
+  async (req, res) => {
+    const params = req.params
+    const media = await db.query.Media.findFirst({
+      where: eq(Media.key, params.key),
+    })
+    if (!media)
+      return res
+        .status(404)
+        .send({ message: `File with key ${params.key} not found.` })
+    const file = await getFile(media.thumbnail)
+    return res
+      .set("Content-Type", media.mimetype)
+      .set(
+        "Content-Disposition",
+        `inline; filename*="thumb__${media.filename}"`
+      )
       .send(file)
   }
 )
