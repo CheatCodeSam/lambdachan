@@ -67,7 +67,7 @@ if (Astro.request.method === "POST") {
         {el.content}
         {el.media && (
           <img
-            src={`${import.meta.env.BACKEND_SERVER_URI}/media/${el.media.key}`}
+            src={`${import.meta.env.BACKEND_SERVER_URI}/media/thumb/${el.media.key}`}
             alt=""
           />
         )}
