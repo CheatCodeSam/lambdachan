@@ -6,9 +6,5 @@ export const generateTripCode = (username: string, password: string) => {
     .createHmac("sha256", salt)
     .update(username + password)
     .digest("hex")
-  const numericHash = BigInt("0x" + hash)
-    .toString()
-    .replace(/\D/g, "")
-  const fixedLengthHash = numericHash.substring(0, 60)
-  return `${username}!!${fixedLengthHash}`
+  return `${username}!!${hash}`
 }
