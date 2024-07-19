@@ -88,7 +88,7 @@ const CreatePostForm = () => {
           />
         </div>
         <div class="">
-          <input type="submit" value="Submit" />
+          <button type="submit">Submit</button>
         </div>
       </form>
     </div>
