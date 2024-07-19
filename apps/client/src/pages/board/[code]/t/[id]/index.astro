@@ -1,6 +1,7 @@
 ---
 import ky, { HTTPError } from "ky"
 import Layout from "../../../../../layouts/Layout.astro"
+import CreatePostForm from "../../../../../components/CreatePostForm"
 const { id, code } = Astro.params
 
 try {
@@ -27,8 +28,10 @@ const posts: any = await ky
 if (Astro.request.method === "POST") {
   try {
     const data = await Astro.request.formData()
+    console.log(data)
     const content = data.get("content")
-    const image: any = data.get("image")
+    const image = data.get("media") as File
+    console.log(image)
 
     const formData = new FormData()
     formData.append("file", image)
@@ -51,7 +54,11 @@ if (Astro.request.method === "POST") {
       })
       .json()
 
-    return Astro.redirect(`/board/${code}/t/${id}#${post.id}`)
+    console.log(`/board/${code}/t/${id}#${post.id}`)
+
+    return new Response(
+      JSON.stringify({ redirect: `/board/${code}/t/${id}#${post.id}` })
+    )
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message)
@@ -74,17 +81,5 @@ if (Astro.request.method === "POST") {
       </div>
     ))
   }
-  <div class="">
-    <form method="POST" enctype="multipart/form-data">
-      <label>
-        Content:
-        <input type="text" name="content" required />
-      </label>
-      <label>
-        Upload Image:
-        <input type="file" name="image" accept="image/*" required />
-      </label>
-      <button>Submit</button>
-    </form>
-  </div>
+  <CreatePostForm client:idle />
 </Layout>

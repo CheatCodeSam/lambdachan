@@ -44,6 +44,9 @@ importers:
       ky:
         specifier: ^1.4.0
         version: 1.4.0
+      object-to-formdata:
+        specifier: ^4.5.1
+        version: 4.5.1
       solid-devtools:
         specifier: ^0.30.1
         version: 0.30.1(solid-js@1.8.18)(vite@5.3.3(@types/node@20.11.24))
@@ -2315,6 +2318,9 @@ packages:
   object-inspect@1.13.2:
     resolution: {integrity: sha512-IRZSRuzJiynemAXPYtPe5BoI/RESNYR7TYm50MC5Mqbd3Jmw5y790sErYw3V6SryFJD64b74qQQs9wn5Bg/k3g==}
     engines: {node: '>= 0.4'}
+
+  object-to-formdata@4.5.1:
+    resolution: {integrity: sha512-QiM9D0NiU5jV6J6tjE1g7b4Z2tcUnKs1OPUi4iMb2zH+7jwlcUrASghgkFk9GtzqNNq8rTQJtT8AzjBAvLoNMw==}
 
   on-finished@2.4.1:
     resolution: {integrity: sha512-oVlzkg3ENAhCk2zdv7IJwd/QUD4z2RxRwpkcGY8psCVcCYZNq4wYnVWALHM+brtuJjePWiYF/ClmuDr8Ch5+kg==}
@@ -5510,6 +5516,8 @@ snapshots:
   object-hash@3.0.0: {}
 
   object-inspect@1.13.2: {}
+
+  object-to-formdata@4.5.1: {}
 
   on-finished@2.4.1:
     dependencies:
