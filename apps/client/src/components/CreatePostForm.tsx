@@ -45,7 +45,6 @@ const CreatePostForm = () => {
                 <input
                   name={field().name}
                   value={field().state.value}
-                  ref={fileInput}
                   onInput={(e) => field().handleChange(e.target.value)}
                 />
                 {field().state.meta.errors ? (
@@ -64,6 +63,7 @@ const CreatePostForm = () => {
                 <input
                   name={field().name}
                   type="file"
+                  ref={fileInput}
                   accept="image/png, image/jpeg"
                   onInput={(e) =>
                     field().handleChange(e.target.files?.item(0) ?? undefined)
@@ -72,6 +72,17 @@ const CreatePostForm = () => {
                 {field().state.meta.errors ? (
                   <em role="alert">{field().state.meta.errors.join(", ")}</em>
                 ) : null}
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      fileInput.value = ""
+                      field().handleChange(undefined)
+                    }}
+                  >
+                    Clear
+                  </button>
+                </div>
               </>
             )}
           />
