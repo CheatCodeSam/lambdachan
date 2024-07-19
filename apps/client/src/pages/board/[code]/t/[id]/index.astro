@@ -68,6 +68,9 @@ if (Astro.request.method === "POST") {
 ---
 
 <Layout title="Posts of threads.">
+  <div class="">
+    <a href={`/board/${code}`}> Go Back </a>
+  </div>
   {
     posts.result.toReversed().map((el: any) => (
       <div class="">
