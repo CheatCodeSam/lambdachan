@@ -28,10 +28,10 @@ const posts: any = await ky
 if (Astro.request.method === "POST") {
   try {
     const data = await Astro.request.formData()
-    console.log(data)
     const content = data.get("content")
     const image = data.get("media") as File
-    console.log(image)
+    const username = data.get("username")
+    const password = data.get("password")
 
     const formData = new FormData()
     formData.append("file", image)
@@ -49,13 +49,14 @@ if (Astro.request.method === "POST") {
           post: {
             content: content,
             media_key: media.key,
+            tripcode: {
+              username: username,
+              password: password,
+            },
           },
         },
       })
       .json()
-
-    console.log(`/board/${code}/t/${id}#${post.id}`)
-
     return new Response(
       JSON.stringify({ redirect: `/board/${code}/t/${id}#${post.id}` })
     )
@@ -74,6 +75,7 @@ if (Astro.request.method === "POST") {
   {
     posts.result.toReversed().map((el: any) => (
       <div class="">
+        <div class="">{el.tripcode}</div>
         {el.content}
         {el.media && (
           <img
